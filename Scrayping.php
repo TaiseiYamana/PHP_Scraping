@@ -2,7 +2,8 @@
 // Open this url on browger http://localhost:8888/PHP_Scraping/Scrayping.php
 echo 'Hello Wow!';
 
-
+ini_set('display_errors','On');
+error_reporting(E_ALL);
 
 require_once("./phpQuery-onefile.php");
 

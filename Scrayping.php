@@ -35,7 +35,8 @@ foreach ($dom_1->find('#contentBox')->find('ul > li > a') as $a){
 
   //$alltitle = $dom_2->find('#contentBox')->find('div');
   //$alltitle = $dom_2->find('#contentBox')->find('div');
-  $alltitle = $dom_2->find('.bg-white.padding-all-md.bd-gray-bottom.margin-bottom-default.text-default.ext-sm-sp.cf');
+  $alltitle = $dom_2->find('.bg-white.padding-all-md.bd-gray-bottom.margin-bottom-default.text-default.text-sm-sp.cf');
+  $alltitle->find('span')->remove();
   //$dom_3->find('a')->remove();
 
   //foreach ($dom_3 as $b){

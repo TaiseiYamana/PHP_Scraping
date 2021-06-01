@@ -33,18 +33,16 @@ foreach ($dom_1->find('#contentBox')->find('ul > li > a') as $a){
   $html_2 = file_get_contents($parson_url);
   $dom_2 = phpQuery::newDocument($html_2);
 
-  $dom_3 = $dom_2->find('.margin-top-default');
-
-  $dom_3->find('span')->remove();
-
-  $dom_4= $dom_3->find('a');
+  //$alltitle = $dom_2->find('#contentBox')->find('div');
+  //$alltitle = $dom_2->find('#contentBox')->find('div');
+  $alltitle = $dom_2->find('.bg-white.padding-all-md.bd-gray-bottom.margin-bottom-default.text-default.ext-sm-sp.cf');
   //$dom_3->find('a')->remove();
 
   //foreach ($dom_3 as $b){
   //echo $b->textContent . '<br>';
   //}
 
-  echo $dom_4->text();
+  echo $alltitle->text() . '<br>';
   /*
   foreach ($dom_4 as $c){
     $url2 = $c->getAttribute('href');

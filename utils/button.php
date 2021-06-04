@@ -1,6 +1,6 @@
 <?php
 // Open this url on browger http://localhost:8888/PHP_Scraping/utils/button.php
-if(isset($_POST["scv"])){
+if(isset($_POST["csv"])){
   $alert = "<script type='text/javascript'>alert('SCVファイルをダウンロードしました。');</script>";
   echo $alert;
 }
@@ -16,5 +16,5 @@ if(isset($_POST["scv"])){
       <option>大阪</option>
     </select>
 -->
-    <button type="submit" name = "scv" value="1"><img src = "../img/download.gif" alt = "zip" /> Download SCV</button>
+    <button type="submit" name = "csv" value="1"><img src = "../img/download.gif" alt = "zip" /> Download SCV</button>
 </form>

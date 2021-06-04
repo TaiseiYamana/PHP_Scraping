@@ -8,5 +8,6 @@
 
   header('Content-type: image/jpg');
 
+  //echo '<img src=' . $data . 'alt=”芝犬の写真">';
   echo $data;
 ?>

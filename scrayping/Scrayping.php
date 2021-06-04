@@ -52,7 +52,8 @@ if($_POST["scv"] == 1){
             $research = $belongs[$i];
           elseif(preg_match(create_pattern($position2), $belongs[$i]))
             $teacher =  $belongs[$i];
-          elseif(preg_match(create_pattern($position1), $belongs[$i]))
+          //elseif(preg_match(create_pattern($position1), $belongs[$i]))
+          else
             $position = $belongs[$i];
         }
 

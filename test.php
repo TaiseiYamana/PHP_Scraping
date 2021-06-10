@@ -1,28 +1,26 @@
 <?php
 
-// http://localhost:8888/PHP_Scraping/test.php
-$position1 = array("所長","副署長");
-$position2 = array("教授", "准教授", "講師", "助教", "助手");
+$csv_path = "./csv/list.csv";
+$f = fopen ($csv_path, "r" );
 
-function create_pattern($array){
-  $pattern = '/';
-  for($i = 0; $i < count($array); $i++){
-    echo $i;
-    if ($i < (count($array)-1)){
-      echo 'OK';
-      $pattern .= $array[$i] . '|';
+//$counter = 0;
+$flag = false;
+
+
+echo "<table border=\"1\">\n";
+  while ( ( $data = fgetcsv ( $f, 1000, ",", '"' ) ) !== FALSE ) {
+    echo "\t<tr>\n";
+    for ($i = 0; $i < count( $data ); $i++ ) {
+      if($flag && ($i == 1 || $i == 7))  //ulrのある列はリンクを埋め込む 個人ページURL:1 LabwebURL:7
+        echo "\t\t<td> <a href=\"" . $data[$i] . "\">" . $data[$i] . "</a></td>\n";
+      else
+        echo "\t\t<td>{$data[$i]}</td>\n";
     }
-    else{
-      echo 'NO';
-      $pattern .= $array[$i] . '/';
-    }
+    echo "\t</tr>\n";
+    $flag = true;
+
   }
-  return $pattern;
-}
-
-//echo count($position1);
-//echo $position1[1];
-echo create_pattern($position1);
-
+echo "</table>\n";
+fclose ( $f );
 
  ?>

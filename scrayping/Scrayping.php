@@ -85,6 +85,9 @@ if($_POST["csv"] == 1){
         $research = "";
         $teacher = "";
         $position = "";
+        $degree = "";
+        $major = "";
+        $web_url = "";
 
         //研究者名と個人ページurlの取得
         $name = $a->textContent;

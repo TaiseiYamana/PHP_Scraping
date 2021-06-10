@@ -1,22 +1,76 @@
 
 <form action="Scrayping.php" method="post"><!--//ボタン配置-->
-    <button type="submit" name = "scv" value="1"><img src = "../img/download.gif" alt = "zip" /> Download SCV</button>
+    <button type="submit" name = "csv" value="1"><img src = "../img/download.gif" alt = "zip" /> Download CSV</button>
 </form>
 
+<head>
+  <style>
+  table{
+    width: 100%;
+    border-collapse:separate;
+    border-spacing: 0;
+  }
+
+  table th:first-child{
+    border-radius: 5px 0 0 0;
+  }
+
+  table th:last-child{
+    border-radius: 0 5px 0 0;
+    border-right: 1px solid #3c6690;
+  }
+
+  table th{
+    text-align: center;
+    color:white;
+    background: linear-gradient(#829ebc,#225588);
+    border-left: 1px solid #3c6690;
+    border-top: 1px solid #3c6690;
+    border-bottom: 1px solid #3c6690;
+    box-shadow: 0px 1px 1px rgba(255,255,255,0.3) inset;
+    width: 25%;
+    padding: 10px 0;
+  }
+
+  table td{
+    text-align: center;
+    border-left: 1px solid #a8b7c5;
+    border-bottom: 1px solid #a8b7c5;
+    border-top:none;
+    box-shadow: 0px -3px 5px 1px #eee inset;
+    width: 25%;
+    padding: 10px 0;
+  }
+
+  table td:last-child{
+    border-right: 1px solid #a8b7c5;
+  }
+
+  table tr:last-child td:first-child {
+    border-radius: 0 0 0 5px;
+  }
+
+  table tr:last-child td:last-child {
+    border-radius: 0 0 5px 0;
+  }
+  </style>
+</head>
 
 <?php
 // Open this url on browger http://localhost:8888/PHP_Scraping/scrayping/Scrayping.php
 require_once("../phpQuery-onefile.php");
 
-$item = array("名前", "研究系", "教授職", "役職", "学位", "専門分野", "研究室Web");
-$f = fopen("../csv/list.csv", "w");
+$item = array("名前", "個人ページURL","研究系", "教授職", "役職", "学位", "専門分野", "研究室Web");
+
+$csv_path = "../csv/list.csv";
+$f = fopen($csv_path , "w");
 
 $position1 = array("所長","副署長");
 $position2 = array("教授", "准教授", "講師", "助教", "助手");
 
-//$_POST["scv"] = 0;
+//$_POST["csv"] = 0;
 
-if($_POST["scv"] == 1){
+if($_POST["csv"] == 1){
   if ( $f ) {
       fputcsv($f, $item);
 
@@ -36,7 +90,7 @@ if($_POST["scv"] == 1){
         $name = $a->textContent;
         $person_url = $top_url . $a->getAttribute('href');
 
-        echo $name . "<br>\n";
+        //echo $name . "<br>\n";
 
         $person_html = file_get_contents($person_url);
         $person_dom = phpQuery::newDocument($person_html);
@@ -44,8 +98,22 @@ if($_POST["scv"] == 1){
         $b = $person_dom->find('.bg-white.padding-all-md.bd-gray-bottom.margin-bottom-default.text-default.text-sm-sp.cf');
         //研究系と役職を取得
         $belongs = $b->find('.fontB.text-md-sp')->text();
-        $belongs = str_replace("／", " ", $belongs);
-        $belongs = explode(" ", $belongs);
+        $belongs = str_replace("／", " ", $belongs); //スラッシュを空白に置き換え
+        $belongs = str_replace('	', '', $belongs); //TABを削除
+        $belongs = str_replace(array("\r\n", "\r", "\n"), '', $belongs); //改行コードを削除
+        $belongs = explode(" ", $belongs); //空白で区切りそれぞれ配列に格納をする
+
+        //学位と専門分野とURLの取得
+        $status = $b->find('.margin-top-default');
+        preg_match('@学位：</span>(.*?)<br>@s', $status, $array);
+        $degree = $array[1];
+        preg_match('@専門分野：</span>(.*?)<br>@s', $status, $array);
+        $major = $array[1];
+
+        if(preg_match('/研究室WEB/',$status)){
+          preg_match('@<a href="([^"]*)" target="_blank" class="fontB">研究室WEB</a>@', $status, $array);
+          $web_url =   $array[1];
+        }
 
         for($i = 0; $i < count($belongs); $i++){
           if(preg_match('/研究系/',$belongs[$i]))
@@ -57,60 +125,41 @@ if($_POST["scv"] == 1){
             $position = $belongs[$i];
         }
 
-        fputcsv($f,array($name, $research, $teacher, $position,"","",""));
+        fputcsv($f,array($name, $person_url, $research, $teacher, $position, $degree, $major,$web_url));
 
-        //echo $belongs;
-        /*
-        $info = $person_dom->find('margin-top-default');
-        $info->find('span')->remove();
-        $info = str_replace(array("\r\n", "\r", "\n"), "\n", $info);
-        $info = explode("\n", $info);
-
-        $belongs = array_merge($name, $belongs);
-        $info = array_merge($belongs, info);
-
-        fputcsv($f, $info);
-
-
-        //fputcsv($f,array($name,"","","","",""));
-        */
       }
 
+      $alert = "<script type='text/javascript'>alert('CSVファイルをダウンロードしました。');</script>";
+      echo $alert;
   }
 
-  $alert = "<script type='text/javascript'>alert('SCVファイルをダウンロードしました。');</script>";
-  echo $alert;
+  //$alert = "<script type='text/javascript'>alert('CSVファイルをダウンロードしました。');</script>";
+  //echo $alert;
 }
 
 fclose($f);
-/*
-require_once("../phpQuery-onefile.php");
 
+$f = fopen ($csv_path, "r" );
 
+$flag = false;
+$counter = 0;
 
-$top_url = "https://www.nii.ac.jp";
-$list_url = "https://www.nii.ac.jp/faculty/list/professors/";
+echo "<table border=\"1\">\n";
+  while ( ( $data = fgetcsv ( $f, 1000, ",", '"' ) ) !== FALSE ) {
+    echo "\t<tr>\n";
+    for ($i = 0; $i < count( $data ); $i++ ) {
+      if($flag && ($i == 1 || $i == 7))  //ulrのある列はリンクを埋め込む 個人ページURL:1 LabwebURL:7
+        echo "\t\t<td> <a href=\"" . $data[$i] . "\">" . $data[$i] . "</a></td>\n";
+      else
+        echo "\t\t<td>{$data[$i]}</td>\n";
+    }
+    echo "\t</tr>\n";
+    $flag = true;
+    $counter += 1;
+  }
+echo "</table>\n";
+fclose ( $f );
 
-$html_1 = file_get_contents($list_url);
-$dom_1 = phpQuery::newDocument($html_1);
-
-foreach ($dom_1->find('#contentBox')->find('ul > li > a') as $a){
-  $name = $a->textContent;
-  $url = $a->getAttribute('href');
-  $parson_url = $top_url . $url;
-
-  echo $name .' url: <a href=' . $parson_url . '>' . $parson_url . '</a><br>';
-
-
-  $html_2 = file_get_contents($parson_url);
-  $dom_2 = phpQuery::newDocument($html_2);
-
-  $alltitle = $dom_2->find('.bg-white.padding-all-md.bd-gray-bottom.margin-bottom-default.text-default.text-sm-sp.cf');
-  $alltitle->find('span')->remove();
-
-  echo $alltitle->text() . '<br>';
-}
-*/
 
 function create_pattern($array){
   $pattern = '/';
@@ -122,6 +171,7 @@ function create_pattern($array){
   }
   return $pattern;
 }
+
 
 
 ?>

@@ -132,8 +132,8 @@ if($_POST["csv"] == 1){
 
       }
 
-      $alert = "<script type='text/javascript'>alert('CSVファイルをダウンロードしました。');</script>";
-      echo $alert;
+      //$alert = "<script type='text/javascript'>alert('CSVファイルをダウンロードしました。');</script>";
+      //echo $alert;
   }
 
   //$alert = "<script type='text/javascript'>alert('CSVファイルをダウンロードしました。');</script>";

@@ -1,5 +1,5 @@
 
-<form action="Scrayping.php" method="post"><!--//ボタン配置-->
+<form action="nni_scrayping.php" method="post"><!--//ボタン配置-->
     <button type="submit" name = "csv" value="1"><img src = "../img/download.gif" alt = "zip" /> Download CSV</button>
 </form>
 
@@ -57,7 +57,7 @@
 </head>
 
 <?php
-// Open this url on browger http://localhost:8888/PHP_Scraping/scrayping/Scrayping.php
+// Open this url on browger http://localhost:8888/PHP_Scraping/scrayping/nii_scrayping.php
 require_once("../phpQuery-onefile.php");
 
 $item = array("名前", "個人ページURL","研究系", "教授職", "役職", "学位", "専門分野", "研究室Web");

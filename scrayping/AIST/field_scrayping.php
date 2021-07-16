@@ -21,7 +21,7 @@ $item = array("URL", "研究分野", "データベース", "主な研究成果",
 
 
 if ( $f ) {
-    fputcsv($f, $item);
+  fputcsv($f, $item);
 
   foreach($url_list as $key => $value){
     $filed_url = $value;
@@ -33,12 +33,16 @@ if ( $f ) {
     $box = $dom->find(".fieldBoxR");
 
     preg_match('@<a href="(.*?)">データベース</a>@', $box, $array);
+    if ($array[1] != "")
     $database_url = $root . $array[1];
     preg_match('@<a href="(.*?)">主な研究成果</a>@', $box, $array);
+    if ($array[1] != "")
     $achievement_url = $root . $array[1];
     preg_match('@<a href="(.*?)" style="text-indent: -1em;">イノベーションコーディネータ</a>@', $box, $array);
+    if ($array[1] != "")
     $coordinator_url = $root . $array[1];
     preg_match('@<a href="(.*?)">研究ユニット</a>@', $box, $array);
+    if ($array[1] != "")
     $unitlist_url = $filed_url . $array[1];
 
     $box = $dom->find(".ContentPane")->find(".grayLineBox_h2");
@@ -64,6 +68,8 @@ if ( $f ) {
 
     fputcsv($f, array($filed_url, $filed_name, $database_url, $achievement_url, $unitlist_url, $unit, $coordinator_url, $contact_info1,
                       $maile1, $phone1, $contact_info2, $maile2, $phone2));
+    $filed_url = $filed_name = $database_url = $achievement_url = $unitlist_url = $unit =
+    $coordinator_url = $contact_info1 = $maile1 = $phone1 = $contact_info2 = $maile2 = $phone2 = "";
   }
 }
 //print_r($array);

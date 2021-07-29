@@ -13,60 +13,69 @@ $url_list = array("エネルギー・環境領域" => "https://www.aist.go.jp/ai
                   "計量標準総合センター" => "https://www.aist.go.jp/aist_j/dept/nmij.html");
 
 
-$in_csv_path = "../../csv/AIST/field.csv";
-$out_csv_path = "../../csv/AIST/unit.csv";
-$in_f = fopen($in_csv_path, "r");
-$out_f = fopen($out_csv_path, "w");
+$csv_path = "../../csv/AIST/unit.csv";
+$f = fopen($csv_path , "w");
 
-$item = array("研究分野", "ユニット名", "研究拠点", "参画する技術研究組合","住所","電話","Eメールアドレス", "FAX", "WebサイトURL");
+$item = array("研究分野", "ユニット名", "研究拠点", "参画する技術研究組合","所在地", "WebサイトURL");
+fputcsv($f, $item);
 
-fputcsv($out_f, $item);
+foreach($url_list as $key => $value){
+  $filed_url = $value;
+  $filed_name = $key;
 
-$n = 0;
-while($line = fgetcsv($in_f)){
-  if($n >= 1){
-    // 研究分野
-    $filed_name = $line[1];
-    // 研究分野URL
-    $filed_url = $line[0];
+  $html = file_get_contents($filed_url);
+  $dom = phpQuery::newDocument($html);
 
-    // HTMLの取得
-    $html = file_get_contents($filed_url);
-    $dom = phpQuery::newDocument($html)->find('.ContentPane');
-    $dom = str_replace(array("\r\n", "\r", "\n"), '', $dom);
-    echo $dom;
+  $box = $dom->find(".defaultList");
 
-    //各ユニットを配列に入れる
-    $unit_array = explode(',', $line[6]);
-    //var_dump($unit_array);
-    foreach($unit_array as $unit_name){
-      //echo $dom;
-      $pattern = '@<div class="title">' . $unit_name . '</div>' . '(.*?)<div class="title">@';
-      echo $pattern . "<br>";
-      //preg_match($pattern, $dom, $array);
-      //var_dump($array);
+  #コメントアウトの削除
+  preg_match('@<!--[\s\S]*?-->@', $box, $array);
+  $box = str_replace($array[0], '', $box);
 
+  $box = $dom->find(".title")->text();
+  $unit = str_replace(array("\r\n", "\r", "\n"), "*", $box);
+  $unit = str_replace("*", ",", $unit);
+  $unit = rtrim($unit, ",");
+  //各ユニットを配列に入れる
+  $unit_array = explode(",", $unit);
 
+  $n = 0;
 
-      $base = "";
-      $participater = "";
-      $address = "";
-      $telephone = "";
-      $maile = "";
-      $fax = "";
-      $web_url = "";
+  foreach ($dom->find('.detail') as $detail){
+    $detail = pq($detail);
 
-      fputcsv($out_f, array($filed_name, $unit_name, $base, $participater, $address, $telephone,$maile, $fax, $web_url));
+    preg_match('@<a(.*?)WEBサイト</a>@', $detail, $array);
+    $web_url = pq($array[0])->attr("href");
+    $array = array();
 
-      //break;
+    $detail = str_replace(array("\r\n", "\r", "\n"), '', $detail);
+
+    #コメントアウトの削除
+    preg_match('@<!--[\s\S]*?-->@', $detail,$array);
+    $detail= str_replace($array[0], '', $detail);
+
+    preg_match('@拠点</h3><p>(.*?)<@', $detail, $array);
+    $base = $array[1];
+    $array = array();
+
+    preg_match('@参画する技術研究組合</h3>(.*?)<h3>@', $detail, $array);
+    $participater = phpQuery::newDocument($array[1])->text();
+    $array = array();
+
+    preg_match('@所在地</h3><p>(.*?)</p>@', $detail, $array);
+    $location = phpQuery::newDocument($array[1]);
+    $location['a']->remove();
+    $location = $location->text();
+    $array = array();
+
+    //echo $detail;
+
+    fputcsv($f, array($filed_name, $unit_array[$n++], $base, $participater, $location, $web_url));
+    $base =  $participater = $location = $web_url = "";
+    //break;
+  }
 
 }
- break;
-}
-$n++;
-}
-
-
 
 
 ?>

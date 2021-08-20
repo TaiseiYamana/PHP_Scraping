@@ -55,7 +55,10 @@ foreach($url_list as $key => $value){
 
         foreach($department_dom->find(".listMember01")->find('div')->find('dt') as $unit_name){ //名前 urlの取得
           $unit_name = pq($unit_name);
-          $unit_url = $root . $unit_name->find('a')->attr("href");
+          //$unit_url = $root . $unit_name->find('a')->attr("href");
+          $unit_url = $unit_name->find('a')->attr("href");
+          if ($unit_url != "")
+          $unit_url = $root . $unit_url;
           $unit_name = $unit_name->text();
           $unit_name = str_replace(array("\r\n", "\r", "\n","	"), '', $unit_name);
           fputcsv($f, array($department_name, $department_name, $unit_name, $unit_url));

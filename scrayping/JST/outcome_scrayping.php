@@ -81,7 +81,7 @@ foreach($Infrastructure_list as $key => $value){
         $project_dom = phpQuery::newDocument($project_html);
 
         $resercher = $project_dom->find(".leftcol_inr.box_profile.cf")->find("dt")->text();
-        $resercher = str_replace(array("\r\n", "\r", "\n"), ',', $resercher);
+        $resercher = str_replace(array("\r\n", "\r", "\n",PHP_EOL), ',', $resercher);
         fputcsv($f, array("基盤事業の成果",$year,$project_name,$project_url, $resercher));
     }
   }

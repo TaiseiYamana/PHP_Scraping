@@ -4,7 +4,7 @@ require_once("../phpQuery-onefile.php");
 
 $item = array("名前", "所属","学位", "研究キーワード","researchmap", "J-GLOBAL", "外部リンク");
 
-$csv_path = "../csv/rm_list.csv";
+$csv_path = "../csv/RM/rm_list.csv";
 //ファイルがない時、作成する。
 if(!file_exists($csv_path)){
   touch($csv_path);

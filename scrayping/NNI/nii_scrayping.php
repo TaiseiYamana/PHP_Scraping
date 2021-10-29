@@ -62,7 +62,7 @@ require_once("../../phpQuery-onefile.php");
 
 $item = array("名前", "個人ページURL","研究系", "教授職", "役職", "学位", "専門分野", "研究室Web");
 
-$csv_path = "../../csv/list.csv";
+$csv_path = "../../csv/NNI/list.csv";
 $f = fopen($csv_path , "w");
 
 $position1 = array("所長","副署長");
